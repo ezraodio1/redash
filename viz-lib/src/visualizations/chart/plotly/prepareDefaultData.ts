@@ -1,10 +1,12 @@
 import { isNil, extend, each, includes, map, sortBy, toString } from "lodash";
 import chooseTextColorForBackground from "@/lib/chooseTextColorForBackground";
-import { ColorPaletteArray } from "@/visualizations/ColorPalette";
+import { AllColorPaletteArrays } from "@/visualizations/ColorPalette";
 import { cleanNumber, normalizeValue, getSeriesAxis } from "./utils";
 
-function getSeriesColor(seriesOptions: any, seriesIndex: any) {
-  return seriesOptions.color || ColorPaletteArray[seriesIndex % ColorPaletteArray.length];
+function getSeriesColor(options: any, seriesOptions: any, seriesIndex: any) {
+  // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+  let palette = AllColorPaletteArrays[options.color_scheme];
+  return seriesOptions.color || palette[seriesIndex % palette.length];
 }
 
 function getHoverInfoPattern(options: any) {
@@ -75,7 +77,7 @@ function prepareSeries(series: any, options: any, additionalOptions: any) {
   const { hoverInfoPattern, index } = additionalOptions;
 
   const seriesOptions = extend({ type: options.globalSeriesType, yAxis: 0 }, options.seriesOptions[series.name]);
-  const seriesColor = getSeriesColor(seriesOptions, index);
+  const seriesColor = getSeriesColor(options, seriesOptions, index);
   const seriesYAxis = getSeriesAxis(series, options);
 
   // Sort by x - `Map` preserves order of items
